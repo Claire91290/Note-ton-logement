@@ -225,7 +225,7 @@ autofillUserAddress();
 
 async function loadAverageRatings(address) {
 try {
-const res = await fetch("https://script.google.com/macros/s/AKfycby6mxS9ogbS6BprkaTJVqurmbB_G9R5a987nfxsMHv7MvveCscaPQmDcCa-5sDvHUlH_w/exec");
+const res = await fetch("https://script.google.com/macros/s/AKfycbyLOA7GeD7rHt6nb_IWehpCKnzzGTciYRRIuhuxvUacs2fb8mixIT0Ay8EdX1xuL6sX4A/exec");
 const data = await res.json();
 const info = data[address];
 const display = document.getElementById("averageDisplay");
@@ -248,7 +248,7 @@ console.error("Erreur chargement notes moyennes :", error);
 
 async function loadAllRatings() {
 try {
-const res = await fetch("https://script.google.com/macros/s/AKfycby6mxS9ogbS6BprkaTJVqurmbB_G9R5a987nfxsMHv7MvveCscaPQmDcCa-5sDvHUlH_w/exec");
+const res = await fetch("https://script.google.com/macros/s/AKfycbyLOA7GeD7rHt6nb_IWehpCKnzzGTciYRRIuhuxvUacs2fb8mixIT0Ay8EdX1xuL6sX4A/exec");
 const data = await res.json();
 
 for (let addr in data) {
@@ -307,7 +307,7 @@ return;
 }
 
 try {
-const response = await fetch("https://script.google.com/macros/s/AKfycby6mxS9ogbS6BprkaTJVqurmbB_G9R5a987nfxsMHv7MvveCscaPQmDcCa-5sDvHUlH_w/exec", {
+const response = await fetch("https://script.google.com/macros/s/AKfycbyLOA7GeD7rHt6nb_IWehpCKnzzGTciYRRIuhuxvUacs2fb8mixIT0Ay8EdX1xuL6sX4A/exec", {
 method: "POST",
 body: JSON.stringify(data),
 headers: { "Content-Type": "application/json" }

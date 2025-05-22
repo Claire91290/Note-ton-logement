@@ -73,27 +73,30 @@
     <input type="hidden" id="lat">
     <input type="hidden" id="lng">
     <input type="hidden" id="address">
-    <div id="criteriaContainer">
-      <label for="housingType"><strong>Type de logement</strong></label><br>
-      <select id="housingType" name="housingType" required style="margin: 10px 0; padding: 8px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
-        <option value="">-- Sélectionnez un type --</option>
-        <option value="appartement">Appartement</option>
-        <option value="maison individuelle">Maison individuelle</option>
-        <option value="colocation">Colocation</option>
-      </select>
-      <label for="duration"><strong>Pendant combien de temps avez-vous habité ce logement ?</strong></label><br>
-      <select id="duration" name="duration" required style="margin: 10px 0; padding: 8px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
-        <option value="">-- Sélectionnez une durée --</option>
-        <option value="< 1 an">&lt; 1 an</option>
-        <option value="entre 1 et 3 ans">entre 1 et 3 ans</option>
-        <option value="> 3 ans">&gt; 3 ans</option>
-      </select>
+    <div id="criteriaContainer"></div>
+    <label for="housingType"><strong>Type de logement</strong></label><br>
+    <select id="housingType" name="housingType" required style="margin: 10px 0; padding: 8px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
+      <option value="">-- Sélectionnez un type --</option>
+      <option value="appartement">Appartement</option>
+      <option value="maison individuelle">Maison individuelle</option>
+      <option value="colocation">Colocation</option>
+    </select>
+    <label for="duration"><strong>Pendant combien de temps avez-vous habité ce logement ?</strong></label><br>
+    <select id="duration" name="duration" required style="margin: 10px 0; padding: 8px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
+      <option value="">-- Sélectionnez une durée --</option>
+      <option value="< 1 an">&lt; 1 an</option>
+      <option value="entre 1 et 3 ans">entre 1 et 3 ans</option>
+      <option value="> 3 ans">&gt; 3 ans</option>
+    </select>
+    <div>
+      <h3>Commentaire libre :</h3>
+      <textarea name="general_comment" id="general_comment" placeholder="Ajoutez ici vos remarques générales sur le logement..."></textarea>
     </div>
     <br><button type="submit">Envoyer</button>
   </form>
 </div>
 <script>
-  const scriptURL = "https://script.google.com/macros/s/AKfycbyLOA7GeD7rHt6nb_IWehpCKnzzGTciYRRIuhuxvUacs2fb8mixIT0Ay8EdX1xuL6sX4A/exec";
+  const scriptURL = "https://script.googleusercontent.com/macros/echo?user_content_key=AehSKLiVzFlDRNxk0XhLPbbd2YfCzx2e9ZBdrWNpcLG_6vHzGFLFpuY_bW65IN3KxR4hmopVYTS3tyGdjq4DDuSWrPgxJZcGyoXE_r4_Py7UYb_q3vSdZeY92_VEPy9FeVRusqtkKuClXqNJCohdGCADgk0ufT44QvLSuqTseZWFI5f7GsjyHZwVyG1V9_IHtlxckbvgDoV-EQooJnKFZA0CS7Ozd1xpf653tlyb1SsWeW9dyiIr74BkflnGZDG1_UYxN2i1Tp03Tj9Ap8KFGh6TpJ3KPZaqtdK_m-ODsT-j&lib=Modit0fYImtAVJZA5THvovjzCe30VWHFV";
   const criteria = [
     { id: "secteur", label: "Secteur" },
     { id: "acces", label: "Accès" },
@@ -115,117 +118,15 @@
       </div>`;
     container.appendChild(block);
   });
-  const commentBox = document.createElement("div");
-  commentBox.innerHTML = `
-    <h3>Commentaire libre :</h3>
-    <textarea name="general_comment" id="general_comment" placeholder="Ajoutez ici vos remarques générales sur le logement..."></textarea>`;
-  container.appendChild(commentBox);
-  let map, marker;
-  async function autofillUserAddress() {
-    if (!navigator.geolocation) return;
-    navigator.geolocation.getCurrentPosition(async (position) => {
-      const lat = position.coords.latitude;
-      const lng = position.coords.longitude;
-      const geocoder = new google.maps.Geocoder();
-      const latlng = { lat, lng };
-      geocoder.geocode({ location: latlng }, (results, status) => {
-        if (status === "OK" && results[0]) {
-          const address = results[0].formatted_address;
-          document.getElementById("autocomplete").value = address;
-          document.getElementById("lat").value = lat;
-          document.getElementById("lng").value = lng;
-          document.getElementById("address").value = address;
-          const location = new google.maps.LatLng(lat, lng);
-          map.setCenter(location);
-          if (marker) marker.setMap(null);
-          marker = new google.maps.Marker({ position: location, map: map });
-          loadAverageRatings(address);
-        }
-      });
-    });
-  }
-  function initMap() {
-    map = new google.maps.Map(document.getElementById("map"), {
-      center: { lat: 48.85, lng: 2.35 },
-      zoom: 12
-    });
-    const autocomplete = new google.maps.places.Autocomplete(document.getElementById("autocomplete"));
-    autocomplete.addListener("place_changed", () => {
-      const place = autocomplete.getPlace();
-      if (!place.geometry) return;
-      const lat = place.geometry.location.lat();
-      const lng = place.geometry.location.lng();
-      const address = place.formatted_address;
-      document.getElementById("lat").value = lat;
-      document.getElementById("lng").value = lng;
-      document.getElementById("address").value = address;
-      map.setCenter(place.geometry.location);
-      if (marker) marker.setMap(null);
-      marker = new google.maps.Marker({ position: place.geometry.location, map: map });
-      loadAverageRatings(address);
-    });
-    loadAllRatings();
-    autofillUserAddress();
-  }
-  async function loadAverageRatings(address) {
-    try {
-      const res = await fetch(scriptURL);
-      const data = await res.json();
-      const info = data[address];
-      const display = document.getElementById("averageDisplay");
-      if (!info) {
-        display.innerHTML = "<strong>Pas encore de notes pour cette adresse.</strong>";
-        return;
-      }
-      let html = `<h3>Note moyenne pour ${address} :</h3><ul>`;
-      for (let crit in info.criteria) {
-        html += `<li>${crit} : ${info.criteria[crit].toFixed(2)} ★</li>`;
-      }
-      html += `</ul><strong>Durée moyenne de séjour :</strong> ${info.duration || "Non spécifiée"}`;
-      display.innerHTML = html;
-    } catch (error) {
-      console.error("Erreur chargement notes moyennes :", error);
-    }
-  }
-  async function loadAllRatings() {
-    try {
-      const res = await fetch(scriptURL);
-      const data = await res.json();
-      for (let addr in data) {
-        const info = data[addr];
-        const avgNote = Object.values(info.criteria).reduce((a, b) => a + b, 0) / Object.values(info.criteria).length;
-        const m = new google.maps.Marker({
-          position: { lat: Number(info.lat), lng: Number(info.lng) },
-          map,
-          icon: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
-        });
-        const infowindow = new google.maps.InfoWindow({
-          content: `<strong>${addr}</strong><br>Note moyenne : ${avgNote.toFixed(2)} ★`
-        });
-        m.addListener("click", () => {
-          infowindow.open(map, m);
-        });
-      }
-    } catch (error) {
-      console.error("Erreur chargement des marqueurs :", error);
-    }
-  }
   document.getElementById("ratingForm").addEventListener("submit", async (e) => {
     e.preventDefault();
     const duration = document.getElementById("duration").value;
     const housingType = document.getElementById("housingType").value;
-    if (!duration || !housingType) {
-      alert("Veuillez remplir tous les champs obligatoires.");
-      return;
-    }
-    const data = {
-      address: document.getElementById("address").value,
-      lat: document.getElementById("lat").value,
-      lng: document.getElementById("lng").value,
-      duration: duration,
-      housingType: housingType,
-      general_comment: document.getElementById("general_comment").value || ""
-    };
+    const address = document.getElementById("address").value;
+    const lat = document.getElementById("lat").value;
+    const lng = document.getElementById("lng").value;
+    const general_comment = document.getElementById("general_comment").value;
+    const data = { address, lat, lng, duration, housingType, general_comment };
     let allRated = true;
     criteria.forEach(c => {
       const rating = document.querySelector(`input[name="${c.id}"]:checked`);

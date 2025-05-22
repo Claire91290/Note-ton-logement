@@ -1,0 +1,91 @@
+
+body {
+  margin: 0;
+  font-family: 'Roboto Serif', serif;
+  font-size: 18px;
+  background: url('https://cdn.glitch.global/bb838fb5-5316-44da-8b0b-2d17add4c44e/background.png?v=1747397637409') no-repeat center center fixed;
+  background-size: cover;
+}
+
+.container {
+  position: relative;
+  z-index: 1;
+  padding: 30px;
+  background-color: rgba(255, 255, 255, 0.9);
+  max-width: 800px;
+  margin: auto;
+  border-radius: 10px;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+.intro-text {
+  font-size: 16px;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+#map {
+  height: 300px;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.stars {
+  display: flex;
+  flex-direction: row-reverse;
+  justify-content: flex-end;
+}
+
+.stars input {
+  display: none;
+}
+
+.stars label {
+  font-size: 25px;
+  color: lightgray;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.stars input:checked ~ label,
+.stars label:hover,
+.stars label:hover ~ label {
+  color: gold;
+}
+
+h3 {
+  margin-bottom: 5px;
+  font-size: 18px;
+}
+
+#averageDisplay {
+  margin-top: 20px;
+  background-color: #f7f7f7;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+textarea {
+  width: 100%;
+  margin-top: 5px;
+  margin-bottom: 15px;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  resize: vertical;
+}
+
+select, input[type=text] {
+  width: 100%;
+  padding: 8px;
+  margin: 10px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}

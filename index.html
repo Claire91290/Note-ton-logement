@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Note ton logement</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Serif&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Note ton logement</h2>
+    <p class="intro-text">Évalue et compare les biens locatifs afin de faire un choix éclairé avant une visite.</p>
+    <div class="title">Découvre ton prochain logement</div>
+    <br>
+    <input id="autocomplete" placeholder="Entrez une adresse" type="text"><br><br>
+    <div id="map"></div>
+    <div id="averageDisplay"></div>
+
+    <form id="ratingForm">
+      <input type="hidden" id="lat">
+      <input type="hidden" id="lng">
+      <input type="hidden" id="address">
+
+      <div id="criteriaContainer">
+        <label for="housingType"><strong>Type de logement</strong></label><br>
+        <select id="housingType" name="housingType" required>
+          <option value="">-- Sélectionnez un type --</option>
+          <option value="appartement">Appartement</option>
+          <option value="maison individuelle">Maison individuelle</option>
+          <option value="colocation">Colocation</option>
+        </select>
+
+        <label for="duration"><strong>Pendant combien de temps avez-vous habité ce logement ?</strong></label><br>
+        <select id="duration" name="duration" required>
+          <option value="">-- Sélectionnez une durée --</option>
+          <option value="< 1 an">&lt; 1 an</option>
+          <option value="entre 1 et 3 ans">entre 1 et 3 ans</option>
+          <option value="> 3 ans">&gt; 3 ans</option>
+        </select>
+      </div>
+
+      <br><button type="submit">Envoyer</button>
+    </form>
+  </div>
+
+  <script src="script.js"></script>
+  <script async
+    src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=places&callback=initMap">
+  </script>
+</body>
+</html>

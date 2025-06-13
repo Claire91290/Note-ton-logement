@@ -59,30 +59,8 @@ border: 1px solid #ccc;
 resize: vertical;
 }
 </style>
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-
-<!-- Connexion Google -->
-<div id="g_id_onload"
-data-client_id="821558407646-qpu2vvs7llea21b7jc9peecsmkuvruc0.apps.googleusercontent.com"
-data-callback="handleCredentialResponse"
-data-auto_prompt="false">
-</div>
-
-<div class="g_id_signin"
-data-type="standard"
-data-size="large"
-data-theme="outline"
-data-text="sign_in_with"
-data-shape="rectangular"
-data-logo_alignment="left">
-</div>
-
-<!-- Déconnexion -->
-<button id="logout-btn" style="display:none; margin: 20px;">Déconnexion</button>
-
-<!-- Application -->
 <div class="container">
 <h2>Note ton logement</h2>
 <p class="intro-text">Évalue et compare les biens locatifs afin de faire un choix éclairé avant une visite.</p>
@@ -114,9 +92,9 @@ data-logo_alignment="left">
 <br><button type="submit">Envoyer</button>
 </form>
 </div>
-
 <script>
-const scriptURL = "https://note-ton-logement-backend.onrender.com/api/ratings";
+const scriptURL = "https://note-ton-logement-production.up.railway.app/api/ratings";
+
 const criteria = [
 { id: "secteur", label: "Secteur" },
 { id: "acces", label: "Accès" },
@@ -124,7 +102,6 @@ const criteria = [
 { id: "exterieur", label: "Extérieur" },
 { id: "loyer", label: "Loyer" }
 ];
-
 const container = document.getElementById("criteriaContainer");
 criteria.forEach(c => {
 const block = document.createElement("div");
@@ -144,7 +121,6 @@ commentBox.innerHTML = `
 <h3>Commentaire libre :</h3>
 <textarea name="general_comment" id="general_comment" placeholder="Ajoutez ici vos remarques générales sur le logement..."></textarea>`;
 container.appendChild(commentBox);
-
 let map, marker;
 async function autofillUserAddress() {
 if (!navigator.geolocation) return;
@@ -277,43 +253,7 @@ alert("Erreur lors de l'envoi.");
 alert("Erreur réseau.");
 }
 });
-
-// Gestion de la connexion Google
-function handleCredentialResponse(response) {
-const jwt = response.credential;
-const payload = JSON.parse(atob(jwt.split('.')[1]));
-
-alert("Bienvenue " + payload.given_name + " !");
-sessionStorage.setItem("google_token", response.credential);
-sessionStorage.setItem("user_name", payload.given_name);
-
-document.getElementById("logout-btn").style.display = "inline-block";
-document.querySelector(".g_id_signin").style.display = "none";
-}
-
-// Déconnexion
-document.getElementById("logout-btn").addEventListener("click", () => {
-const token = sessionStorage.getItem("google_token");
-
-if (token) {
-fetch(`https://oauth2.googleapis.com/revoke?token=${token}`, {
-method: 'POST',
-headers: {
-Content-type': 'application/x-www-form-urlencoded'
-}
-}).then(() => {
-console.log("Token révoqué");
-}).catch(err => {
-console.error("Erreur de révocation :", err);
-});
-}
-
-sessionStorage.clear();
-google.accounts.id.disableAutoSelect();
-location.reload();
-});
 </script>
-
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAB4n5plmNu_ncJBX3CXYLWtGqdgMocQ7U&libraries=places&callback=initMap"></script>
 </body>
 </html>

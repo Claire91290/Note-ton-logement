@@ -59,8 +59,30 @@ border: 1px solid #ccc;
 resize: vertical;
 }
 </style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
+
+<!-- Connexion Google -->
+<div id="g_id_onload"
+data-client_id="821558407646-qpu2vvs7llea21b7jc9peecsmkuvruc0.apps.googleusercontent.com"
+data-callback="handleCredentialResponse"
+data-auto_prompt="false">
+</div>
+
+<div class="g_id_signin"
+data-type="standard"
+data-size="large"
+data-theme="outline"
+data-text="sign_in_with"
+data-shape="rectangular"
+data-logo_alignment="left">
+</div>
+
+<!-- Déconnexion -->
+<button id="logout-btn" style="display:none; margin: 20px;">Déconnexion</button>
+
+<!-- Application -->
 <div class="container">
 <h2>Note ton logement</h2>
 <p class="intro-text">Évalue et compare les biens locatifs afin de faire un choix éclairé avant une visite.</p>

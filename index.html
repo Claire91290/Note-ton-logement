@@ -1,82 +1,82 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <title>Note ton logement</title>
-  <link href="https://fonts.googleapis.com/css2?family=Roboto+Serif&display=swap" rel="stylesheet">
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Roboto Serif', serif;
-      font-size: 18px;
-      background: url('https://cdn.glitch.global/bb838fb5-5316-44da-8b0b-2d17add4c44e/background.png?v=1747397637409') no-repeat center center fixed;
-      background-size: cover;
-    }
-    .container {
-      position: relative;
-      z-index: 1;
-      padding: 30px;
-      background-color: rgba(255, 255, 255, 0.9);
-      max-width: 800px;
-      margin: auto;
-      border-radius: 10px;
-    }
-    h2 { font-size: 24px; }
-    .intro-text { font-size: 16px; }
-    .title { font-size: 18px; font-weight: bold; margin-top: 10px; }
-    #map { height: 300px; width: 100%; margin-bottom: 20px; }
-    .stars {
-      display: flex;
-      flex-direction: row-reverse;
-      justify-content: flex-end;
-    }
-    .stars input { display: none; }
-    .stars label {
-      font-size: 25px;
-      color: lightgray;
-      cursor: pointer;
-      transition: color 0.2s;
-    }
-    .stars input:checked ~ label,
-    .stars label:hover,
-    .stars label:hover ~ label {
-      color: gold;
-    }
-    h3 { margin-bottom: 5px; font-size: 18px; }
-    #averageDisplay {
-      margin-top: 20px;
-      background-color: #f7f7f7;
-      padding: 15px;
-      border-radius: 8px;
-    }
-    textarea {
-      width: 100%;
-      margin-top: 5px;
-      margin-bottom: 15px;
-      padding: 8px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      resize: vertical;
-    }
-  </style>
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
+<meta charset="UTF-8">
+<title>Note ton logement</title>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Serif&display=swap" rel="stylesheet">
+<style>
+body {
+margin: 0;
+font-family: 'Roboto Serif', serif;
+font-size: 18px;
+background: url('https://cdn.glitch.global/bb838fb5-5316-44da-8b0b-2d17add4c44e/background.png?v=1747397637409') no-repeat center center fixed;
+background-size: cover;
+}
+.container {
+position: relative;
+z-index: 1;
+padding: 30px;
+background-color: rgba(255, 255, 255, 0.9);
+max-width: 800px;
+margin: auto;
+border-radius: 10px;
+}
+h2 { font-size: 24px; }
+.intro-text { font-size: 16px; }
+.title { font-size: 18px; font-weight: bold; margin-top: 10px; }
+#map { height: 300px; width: 100%; margin-bottom: 20px; }
+.stars {
+display: flex;
+flex-direction: row-reverse;
+justify-content: flex-end;
+}
+.stars input { display: none; }
+.stars label {
+font-size: 25px;
+color: lightgray;
+cursor: pointer;
+transition: color 0.2s;
+}
+.stars input:checked ~ label,
+.stars label:hover,
+.stars label:hover ~ label {
+color: gold;
+}
+h3 { margin-bottom: 5px; font-size: 18px; }
+#averageDisplay {
+margin-top: 20px;
+background-color: #f7f7f7;
+padding: 15px;
+border-radius: 8px;
+}
+textarea {
+width: 100%;
+margin-top: 5px;
+margin-bottom: 15px;
+padding: 8px;
+border-radius: 5px;
+border: 1px solid #ccc;
+resize: vertical;
+}
+</style>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
 <!-- Connexion Google -->
 <div id="g_id_onload"
-  data-client_id="821558407646-qpu2vvs7llea21b7jc9peecsmkuvruc0.apps.googleusercontent.com"
-  data-callback="handleCredentialResponse"
-  data-auto_prompt="false">
+data-client_id="821558407646-qpu2vvs7llea21b7jc9peecsmkuvruc0.apps.googleusercontent.com"
+data-callback="handleCredentialResponse"
+data-auto_prompt="false">
 </div>
 
 <div class="g_id_signin"
-  data-type="standard"
-  data-size="large"
-  data-theme="outline"
-  data-text="sign_in_with"
-  data-shape="rectangular"
-  data-logo_alignment="left">
+data-type="standard"
+data-size="large"
+data-theme="outline"
+data-text="sign_in_with"
+data-shape="rectangular"
+data-logo_alignment="left">
 </div>
 
 <!-- Déconnexion -->
@@ -84,237 +84,916 @@
 
 <!-- Application -->
 <div class="container">
-  <h2>Note ton logement</h2>
-  <p class="intro-text">Évalue et compare les biens locatifs afin de faire un choix éclairé avant une visite.</p>
-  <div class="title">Découvre ton prochain logement</div>
-  <br>
-  <input id="autocomplete" placeholder="Entrez une adresse" type="text" style="width: 100%; padding: 8px;"><br><br>
-  <div id="map"></div>
-  <div id="averageDisplay"></div>
-  <form id="ratingForm">
-    <input type="hidden" id="lat">
-    <input type="hidden" id="lng">
-    <input type="hidden" id="address">
-    <div id="criteriaContainer">
-      <label for="housingType"><strong>Type de logement</strong></label><br>
-      <select id="housingType" name="housingType" required style="margin: 10px 0; padding: 8px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
-        <option value="">-- Sélectionnez un type --</option>
-        <option value="appartement">Appartement</option>
-        <option value="maison individuelle">Maison individuelle</option>
-        <option value="colocation">Colocation</option>
-      </select>
-      <label for="duration"><strong>Durée d'habitation dans ce logement</strong></label><br>
-      <select id="duration" name="duration" required style="margin: 10px 0; padding: 8px; width: 100%; border-radius: 5px; border: 1px solid #ccc;">
-        <option value="">-- Sélectionnez une durée --</option>
-        <option value="< 1 an">&lt; 1 an</option>
-        <option value="entre 1 et 3 ans">entre 1 et 3 ans</option>
-        <option value="> 3 ans">&gt; 3 ans</option>
-      </select>
-    </div>
-    <br><button type="submit">Envoyer</button>
-  </form>
+<h2>Note ton logement</h2>
+<p class="intro-text">Évalue et compare les biens locatifs afin de faire un choix éclairé avant une visite.</p>
+<div class="title">Découvre ton prochain logement</div>
+<br>
+<input id="autocomplete" placeholder="Entrez une adresse" type="text" style="width: 100%; padding: 8px;"><br><br>
+<div id="map"></div>
+<div id="averageDisplay"></div>
+<button id="deleteRatingBtn" style="display:none; margin-top: 10px;">Supprimer ma notation</button>
+<form id="ratingForm">
+<input type="hidden" id="lat">
+<input type="hidden" id="lng">
+<input type="hidden" id="address">
+<div id="criteriaContainer">
+<label for="housingType"><strong>Type de logement</strong></label><br>
+<select id="housingType" required>
+<option value="">-- Sélectionnez un type --</option>
+<option value="appartement">Appartement</option>
+<option value="maison individuelle">Maison individuelle</option>
+<option value="colocation">Colocation</option>
+</select>
+<label for="duration"><strong>Durée d'habitation</strong></label><br>
+<select id="duration" required>
+<option value="">-- Sélectionnez une durée --</option>
+<option value="< 1 an">&lt; 1 an</option>
+<option value="entre 1 et 3 ans">entre 1 et 3 ans</option>
+<option value="> 3 ans">&gt; 3 ans</option>
+</select>
+</div>
+<br><button type="submit">Envoyer</button>
+</form>
 </div>
 
 <script>
 const scriptURL = "https://note-ton-logement-backend.onrender.com/api/ratings";
 const criteria = [
-  { id: "secteur", label: "Secteur" },
-  { id: "acces", label: "Accès" },
-  { id: "interieur", label: "Intérieur" },
-  { id: "exterieur", label: "Extérieur" },
-  { id: "loyer", label: "Loyer" }
+{ id: "secteur", label: "Secteur" },
+{ id: "acces", label: "Accès" },
+{ id: "interieur", label: "Intérieur" },
+{ id: "exterieur", label: "Extérieur" },
+{ id: "loyer", label: "Loyer" }
 ];
 
 const container = document.getElementById("criteriaContainer");
 criteria.forEach(c => {
-  const block = document.createElement("div");
-  block.innerHTML = `
-    <h3>${c.label} :</h3>
-    <div class="stars">
-      <input type="radio" id="${c.id}5" name="${c.id}" value="5" required><label for="${c.id}5">★</label>
-      <input type="radio" id="${c.id}4" name="${c.id}" value="4"><label for="${c.id}4">★</label>
-      <input type="radio" id="${c.id}3" name="${c.id}" value="3"><label for="${c.id}3">★</label>
-      <input type="radio" id="${c.id}2" name="${c.id}" value="2"><label for="${c.id}2">★</label>
-      <input type="radio" id="${c.id}1" name="${c.id}" value="1"><label for="${c.id}1">★</label>
-    </div>`;
-  container.appendChild(block);
+const block = document.createElement("div");
+block.innerHTML = `
+<h3>${c.label} :</h3>
+<div class="stars">
+${[5,4,3,2,1].map(i => `<input type="radio" id="${c.id}${i}" name="${c.id}" value="${i}" required><label for="${c.id}${i}">★</label>`).join('')}
+</div>`;
+container.appendChild(block);
 });
-const commentBox = document.createElement("div");
-commentBox.innerHTML = `
-  <h3>Commentaire libre :</h3>
-  <textarea name="general_comment" id="general_comment" placeholder="Ajoutez ici vos remarques générales sur le logement..."></textarea>`;
-container.appendChild(commentBox);
+container.innerHTML += `
+<h3>Commentaire libre :</h3>
+<textarea id="general_comment" placeholder="Ajoutez vos remarques..."></textarea>`;
 
 let map, marker;
-async function autofillUserAddress() {
-  if (!navigator.geolocation) return;
-  navigator.geolocation.getCurrentPosition(async (position) => {
-    const lat = position.coords.latitude;
-    const lng = position.coords.longitude;
-    const geocoder = new google.maps.Geocoder();
-    const latlng = { lat, lng };
-    geocoder.geocode({ location: latlng }, (results, status) => {
-      if (status === "OK" && results[0]) {
-        const address = results[0].formatted_address;
-        document.getElementById("autocomplete").value = address;
-        document.getElementById("lat").value = lat;
-        document.getElementById("lng").value = lng;
-        document.getElementById("address").value = address;
-        const location = new google.maps.LatLng(lat, lng);
-        map.setCenter(location);
-        if (marker) marker.setMap(null);
-        marker = new google.maps.Marker({ position: location, map: map });
-        loadAverageRatings(address);
-      }
-    });
-  });
-}
 function initMap() {
-  map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: 48.85, lng: 2.35 },
-    zoom: 12
-  });
-  const autocomplete = new google.maps.places.Autocomplete(document.getElementById("autocomplete"));
-  autocomplete.addListener("place_changed", () => {
-    const place = autocomplete.getPlace();
-    if (!place.geometry) return;
-    const lat = place.geometry.location.lat();
-    const lng = place.geometry.location.lng();
-    const address = place.formatted_address;
-    document.getElementById("lat").value = lat;
-    document.getElementById("lng").value = lng;
-    document.getElementById("address").value = address;
-    map.setCenter(place.geometry.location);
-    if (marker) marker.setMap(null);
-    marker = new google.maps.Marker({ position: place.geometry.location, map: map });
-    loadAverageRatings(address);
-  });
-  loadAllRatings();
-  autofillUserAddress();
+map = new google.maps.Map(document.getElementById("map"), {
+center: { lat: 48.85, lng: 2.35 }, zoom: 12
+});
+const autocomplete = new google.maps.places.Autocomplete(document.getElementById("autocomplete"));
+autocomplete.addListener("place_changed", () => {
+const place = autocomplete.getPlace();
+if (!place.geometry) return;
+const lat = place.geometry.location.lat();
+const lng = place.geometry.location.lng();
+const address = place.formatted_address;
+document.getElementById("lat").value = lat;
+document.getElementById("lng").value = lng;
+document.getElementById("address").value = address;
+map.setCenter(place.geometry.location);
+if (marker) marker.setMap(null);
+marker = new google.maps.Marker({ position: place.geometry.location, map });
+loadAverageRatings(address);
+});
+loadAllRatings();
 }
+
 async function loadAverageRatings(address) {
-  try {
-    const res = await fetch(scriptURL);
-    const data = await res.json();
-    const info = data[address];
-    const display = document.getElementById("averageDisplay");
-    if (!info) {
-      display.innerHTML = "<strong>Pas encore de notes pour cette adresse.</strong>";
-      return;
-    }
-    let html = `<h3>Note moyenne pour ${address} :</h3><ul>`;
-    for (let crit in info.criteria) {
-      html += `<li>${crit} : ${info.criteria[crit].toFixed(2)} ★</li>`;
-    }
-    html += `</ul><strong>Durée moyenne de séjour :</strong> ${info.duration || "Non spécifiée"}`;
-    display.innerHTML = html;
-  } catch (error) {
-    console.error("Erreur chargement notes moyennes :", error);
-  }
+try {
+const res = await fetch(scriptURL);
+const data = await res.json();
+const info = data[address];
+const userId = sessionStorage.getItem("user_id");
+document.getElementById("deleteRatingBtn").style.display = (info?.users?.includes(userId)) ? "inline-block" : "none";
+const display = document.getElementById("averageDisplay");
+if (!info) return display.innerHTML = "<strong>Pas encore de notes pour cette adresse.</strong>";
+let html = `<h3>Note moyenne pour ${address} :</h3><ul>`;
+for (let crit in info.criteria) {
+html += `<li>${crit} : ${info.criteria[crit].toFixed(2)} ★</li>`;
 }
-async function loadAllRatings() {
-  try {
-    const res = await fetch(scriptURL);
-    const data = await res.json();
-    for (let addr in data) {
-      const info = data[addr];
-      const avgNote = Object.values(info.criteria).reduce((a, b) => a + b, 0) / Object.values(info.criteria).length;
-      const m = new google.maps.Marker({
-        position: { lat: Number(info.lat), lng: Number(info.lng) },
-        map,
-        icon: "http://maps.google.com/mapfiles/ms/icons/yellow-dot.png"
-      });
-      const infowindow = new google.maps.InfoWindow({
-        content: `<strong>${addr}</strong><br>Note moyenne : ${avgNote.toFixed(2)} ★`
-      });
-      m.addListener("click", () => {
-        infowindow.open(map, m);
-      });
-    }
-  } catch (error) {
-    console.error("Erreur chargement des marqueurs :", error);
-  }
+html += `</ul><strong>Durée moyenne :</strong> ${info.duration || "Non spécifiée"}`;
+display.innerHTML = html;
+} catch (e) { console.error("Erreur notes moyennes:", e); }
 }
-document.getElementById("ratingForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const duration = document.getElementById("duration").value;
-  const housingType = document.getElementById("housingType").value;
-  if (!duration || !housingType) {
-    alert("Veuillez remplir tous les champs obligatoires.");
-    return;
-  }
-  const data = {
-    address: document.getElementById("address").value,
-    lat: document.getElementById("lat").value,
-    lng: document.getElementById("lng").value,
-    duration: duration,
-    housingType: housingType,
-    general_comment: document.getElementById("general_comment").value || ""
-  };
-  let allRated = true;
-  criteria.forEach(c => {
-    const rating = document.querySelector(`input[name="${c.id}"]:checked`);
-    if (!rating) allRated = false;
-    data[c.id] = rating ? rating.value : "";
-  });
-  if (!allRated) {
-    alert("Merci de noter chaque critère.");
-    return;
-  }
-  try {
-    const response = await fetch(scriptURL, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" }
-    });
-    if (response.ok) {
-      alert("Merci pour votre évaluation !");
-      document.getElementById("ratingForm").reset();
-    } else {
-      alert("Erreur lors de l'envoi.");
-    }
-  } catch (error) {
-    alert("Erreur réseau.");
-  }
+
+document.getElementById("ratingForm").addEventListener("submit", async e => {
+e.preventDefault();
+const data = {
+address: document.getElementById("address").value,
+lat: document.getElementById("lat").value,
+lng: document.getElementById("lng").value,
+duration: document.getElementById("duration").value,
+housingType: document.getElementById("housingType").value,
+general_comment: document.getElementById("general_comment").value,
+user_id: sessionStorage.getItem("user_id")
+};
+for (let c of criteria) {
+const val = document.querySelector(`input[name="${c.id}"]:checked`);
+if (!val) return alert("Merci de noter chaque critère.");
+data[c.id] = val.value;
+}
+try {
+const res = await fetch(scriptURL, {
+method: "POST",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify(data)
+});
+if (res.ok) {
+alert("Merci pour votre évaluation !");
+document.getElementById("ratingForm").reset();
+} else alert("Erreur lors de l'envoi.");
+} catch (err) { alert("Erreur réseau"); }
 });
 
-// Gestion de la connexion Google
+document.getElementById("deleteRatingBtn").addEventListener("click", async () => {
+const address = document.getElementById("address").value;
+const user_id = sessionStorage.getItem("user_id");
+if (!user_id || !address) return alert("Connexion requise.");
+if (!confirm("Voulez-vous vraiment supprimer votre notation ?")) return;
+try {
+const res = await fetch(scriptURL, {
+method: "DELETE",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ address, user_id })
+});
+if (res.ok) {
+alert("Notation supprimée.");
+location.reload();
+} else alert("Erreur lors de la suppression.");
+} catch (e) { alert("Erreur réseau."); }
+});
+
 function handleCredentialResponse(response) {
-  const jwt = response.credential;
-  const payload = JSON.parse(atob(jwt.split('.')[1]));
-
-  alert("Bienvenue " + payload.given_name + " !");
-  sessionStorage.setItem("google_token", response.credential);
-  sessionStorage.setItem("user_name", payload.given_name);
-
-  document.getElementById("logout-btn").style.display = "inline-block";
-  document.querySelector(".g_id_signin").style.display = "none";
+const payload = JSON.parse(atob(response.credential.split('.')[1]));
+sessionStorage.setItem("google_token", response.credential);
+sessionStorage.setItem("user_name", payload.given_name);
+sessionStorage.setItem("user_id", payload.sub);
+alert("Bienvenue " + payload.given_name + " !");
+document.getElementById("logout-btn").style.display = "inline-block";
+document.querySelector(".g_id_signin").style.display = "none";
 }
 
-// Déconnexion
 document.getElementById("logout-btn").addEventListener("click", () => {
-  const token = sessionStorage.getItem("google_token");
-
-  if (token) {
-    fetch(`https://oauth2.googleapis.com/revoke?token=${token}`, {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/x-www-form-urlencoded'
-      }
-    }).then(() => {
-      console.log("Token révoqué");
-    }).catch(err => {
-      console.error("Erreur de révocation :", err);
-    });
-  }
-
-  sessionStorage.clear();
-  google.accounts.id.disableAutoSelect();
-  location.reload();
+const token = sessionStorage.getItem("google_token");
+if (token) {
+fetch(`https://oauth2.googleapis.com/revoke?token=${token}`, {
+method: 'POST',
+headers: { 'Content-type': 'application/x-www-form-urlencoded' }
+}).then(() => console.log("Token révoqué")).catch(console.error);
+}
+sessionStorage.clear();
+google.accounts.id.disableAutoSelect();
+location.reload();
 });
 </script>
-
 <script async src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAB4n5plmNu_ncJBX3CXYLWtGqdgMocQ7U&libraries=places&callback=initMap"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

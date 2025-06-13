@@ -44,7 +44,6 @@ color: gold;
 }
 h3 { margin-bottom: 5px; font-size: 18px; }
 #averageDisplay {
-<button id="deleteRatingBtn" style="display:none; margin-top: 10px;">Supprimer ma notation</button>
 margin-top: 20px;
 background-color: #f7f7f7;
 padding: 15px;
@@ -279,6 +278,7 @@ alert("Erreur réseau.");
 }
 });
 
+// Gestion de la connexion Google
 function handleCredentialResponse(response) {
 const jwt = response.credential;
 const payload = JSON.parse(atob(jwt.split('.')[1]));
@@ -291,6 +291,7 @@ document.getElementById("logout-btn").style.display = "inline-block";
 document.querySelector(".g_id_signin").style.display = "none";
 }
 
+// Déconnexion
 document.getElementById("logout-btn").addEventListener("click", () => {
 const token = sessionStorage.getItem("google_token");
 

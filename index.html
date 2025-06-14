@@ -67,7 +67,7 @@ resize: vertical;
 <div id="g_id_onload"
 data-client_id="821558407646-qpu2vvs7llea21b7jc9peecsmkuvruc0.apps.googleusercontent.com"
 data-callback="handleCredentialResponse"
-data-auto_prompt="false">
+data-auto_prompt="true">
 </div>
 
 <div class="g_id_signin"
@@ -75,7 +75,7 @@ data-type="standard"
 data-size="large"
 data-theme="outline"
 data-text="sign_in_with"
-data-shape="rectangular"
+
 data-logo_alignment="center">
 </div>
 <script>
@@ -85,6 +85,21 @@ function handleCredentialResponse(response) {
 const token = response.credential;
 const payload = JSON.parse(atob(token.split('.')[1]));
 userId = payload.sub; 
+
+localStorage.setItem("google_token", token);
+localStorage.setItem("user_id", userId);
+
+window.onload = function () {
+const savedToken = localStorage.getItem("google_token");
+const savedUserId = localStorage.getItem("user_id");
+
+if (savedToken && savedUserId) {
+userId = savedUserId;
+
+document.getElementById("logout-btn").addEventListener("click", () => {
+localStorage.removeItem("google_token");
+localStorage.removeItem("user_id");
+userId = null;
 
 document.getElementById("logout-btn").style.display = "block";
 document.querySelector(".g_id_signin").style.display = "none";

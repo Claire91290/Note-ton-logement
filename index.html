@@ -76,9 +76,20 @@ data-size="large"
 data-theme="outline"
 data-text="sign_in_with"
 data-shape="rectangular"
-data-logo_alignment="left">
+data-logo_alignment="center">
 </div>
+<script>
+let userId = null;
 
+function handleCredentialResponse(response) {
+const token = response.credential;
+const payload = JSON.parse(atob(token.split('.')[1]));
+userId = payload.sub; 
+
+document.getElementById("logout-btn").style.display = "block";
+document.querySelector(".g_id_signin").style.display = "none";
+}
+</script>
 <!-- Déconnexion -->
 <button id="logout-btn" style="display:none; margin: 20px;">Déconnexion</button>
 
@@ -204,6 +215,30 @@ let html = `<h3>Note moyenne pour ${address} :</h3><ul>`;
 for (let crit in info.criteria) {
 html += `<li>${crit} : ${info.criteria[crit].toFixed(2)} ★</li>`;
 }
+if (info.userId === userId) {
+html += `<br><button onclick="deleteRating('${address}')">Supprimer ma note</button>`;
+}
+async function deleteRating(address) {
+if (!confirm("Confirmer la suppression de votre évaluation ?")) return;
+
+try {
+const res = await fetch(`${scriptURL}`, {
+method: "DELETE",
+headers: { "Content-Type": "application/json" },
+body: JSON.stringify({ address, userId })
+});
+
+if (res.ok) {
+alert("Votre évaluation a été supprimée.");
+loadAverageRatings(address);
+} else {
+alert("Erreur lors de la suppression.");
+}
+} catch (err) {
+alert("Erreur réseau.");
+console.error(err);
+}
+}
 html += `</ul><strong>Durée moyenne de séjour :</strong> ${info.duration || "Non spécifiée"}`;
 display.innerHTML = html;
 } catch (error) {
@@ -240,6 +275,7 @@ const housingType = document.getElementById("housingType").value;
 if (!duration || !housingType) {
 alert("Veuillez remplir tous les champs obligatoires.");
 return;
+data.userId = userId;
 }
 const data = {
 address: document.getElementById("address").value,
